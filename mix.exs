@@ -21,7 +21,6 @@ defmodule AddUser.Mixfile do
 
   defp deps do
     [
-      {:comeonin,            "~> 4.0"},
       {:pbkdf2_elixir,       "~> 0.12.3"}
     ]
   end

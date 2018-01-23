@@ -8,6 +8,7 @@ defmodule AddUser do
     args
     |> parse_args
     |> process
+    :ok
   end
 
   defp process(:help) do
@@ -15,10 +16,8 @@ defmodule AddUser do
   end
 
   defp process({name, password}) do
-    IO.puts name
-    IO.puts password
     case is_password_valid?(password) do
-      true  -> case File.exists?("users.config") do
+      true  -> case File.exists?("users.db") do
                         :true  -> add_user(name, password)
                         :false -> create_file(name, password)
                       end
@@ -26,20 +25,32 @@ defmodule AddUser do
     end
   end
 
-
-
   defp add_user(name, password) do
-    #        path = Path.join(:code.priv_dir(:incunabula), "users/users.config")
-    #    {:ok, [users: users]} = :file.consult(path)
-    IO.puts "fix up"
+    {:ok, [users: usersandhashes]} = :file.consult("./users.db")
+    hash = Pbkdf2.hash_pwd_salt(password)
+    newuandh = List.keystore(usersandhashes, name, 0, {name, hash})
+    :ok = write_file({:users, newuandh})
   end
 
   defp create_file(name, password) do
-    IO.puts "fix up II"
+    hash = Pbkdf2.hash_pwd_salt(password)
+    payload = {:users, [{name, hash}]}
+    :ok = write_file(payload)
   end
 
-  def is_password_valid?(password) do
+  defp write_file(payload) do
+    fileformat = :io_lib.format('~p.~n', [payload])
+    :ok = File.write("./users.db", fileformat)
+  end
+
+  defp is_password_valid?(password)
+  when byte_size(password) > 9
+  and  byte_size(password) < 121 do
     true
+  end
+
+  defp is_password_valid?(_) do
+    false
   end
 
   defp parse_args(args) do
@@ -55,10 +66,11 @@ defmodule AddUser do
     IO.puts """
     Purpose
     -------
-    Creates a new user/password
+    * if the user doesn't exist this creates a new user/password
+    * if the user exists it overwrites their password
 
     Change directory to the incunabula directory priv/users
-    * if there is a file users.config in there the user will be added to it
+    * if there is a file users.db in there the user will be added to it
     * if there is not then a new file will be created
 
     Usage
@@ -68,7 +80,7 @@ defmodule AddUser do
     Password Restrictions
     ---------------------
     The password must be:
-    *
+    * between 10 and 120 characters long
     """
   end
 
