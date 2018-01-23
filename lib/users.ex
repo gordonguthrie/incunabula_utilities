@@ -11,12 +11,7 @@ defmodule IncunabulaUtilities.Users do
       nil             ->
         false
       {_, hash} ->
-        IO.inspect "checking password"
-        IO.inspect password
-        IO.inspect hash
-        #IO.inspect Comeonin.Pbkdf2.checkpw(password, hash)
-        IO.inspect "returning"
-        # IO.inspect ret
+        Pbkdf2.verify_pass(password, hash)
     end
   end
 
