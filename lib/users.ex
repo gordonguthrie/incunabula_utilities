@@ -16,7 +16,7 @@ defmodule IncunabulaUtilities.Users do
   end
 
     def get_users_and_hashes() do
-    path = Path.join(:code.priv_dir(:incunabula), "users/users.db")
+    path = Path.join(Incunabula.Git.get_books_dir(), "../users/users.db")
     {:ok, [users: users]} = :file.consult(path)
     users
   end
