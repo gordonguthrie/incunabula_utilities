@@ -26,15 +26,15 @@ defmodule AddUser do
   end
 
   defp add_user(name, password) do
-    {:ok, [users: usersandhashes]} = :file.consult("./users.db")
+    {:ok, usersandhashes} = :file.consult("./users.db")
     hash = Pbkdf2.hash_pwd_salt(password)
     newuandh = List.keystore(usersandhashes, name, 0, {name, hash})
-    :ok = write_file({:users, newuandh})
+    :ok = write_file(newuandh)
   end
 
   defp create_file(name, password) do
     hash = Pbkdf2.hash_pwd_salt(password)
-    payload = {:users, [{name, hash}]}
+    payload = [{name, hash}]
     :ok = write_file(payload)
   end
 
