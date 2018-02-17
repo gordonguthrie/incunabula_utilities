@@ -1,0 +1,16 @@
+Incunabula Utilities
+--------------------
+
+Does three things:
+
+* provides an escript for creating the intial users (including admin) safely with proper passwords
+* provides a module for doing user stuff for the main Incunabula app
+* provides a general db module for Incunabula
+
+How to build it
+---------------
+
+```
+mix compile
+mix escript.build
+```
