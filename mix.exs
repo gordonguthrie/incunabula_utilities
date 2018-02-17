@@ -8,9 +8,9 @@ defmodule AddUser.Mixfile do
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      description: "add users for Incunabula",
-     package: package,
-     escript: escript,
-     deps: deps]
+     package: package(),
+     escript: escript(),
+     deps: deps()]
   end
 
   defp escript do
