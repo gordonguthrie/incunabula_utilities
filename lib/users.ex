@@ -1,20 +1,29 @@
 defmodule IncunabulaUtilities.Users do
 
-@usersDB "users.db"
+  @usersDB "users.db"
 
-#
-# some of these functions are designed to be used in the main Incunabula
-# and some in the command line escript to create the admin user
+  #
+  # Some of these functions are designed to be used in the main Incunabula
+  # and some in the command line escript to create the admin user
+  #
+  # The reason for this is that to avoid having a default insecure password
+  # this is a utility for generating the intial login on the command line
+  # using an escript so user stuff covers two different worlds
+  #
 
-def get_users() do
+  #
+  # Incunabul API
+  #
+
+  def get_users() do
     dir = get_users_dir()
     IncunabulaUtilities.DB.lookup_values(dir, @usersDB, :username)
   end
 
   def is_login_valid(username, password) do
-  dir = get_users_dir()
-  case IncunabulaUtilities.DB.lookup_value(dir, @usersDB, :username,
-      username, :passwordhash) do
+    dir = get_users_dir()
+    case IncunabulaUtilities.DB.lookup_value(dir, @usersDB, :username,
+          username, :passwordhash) do
       {:ok, hash} ->
         Pbkdf2.verify_pass(password, hash)
       {:error, _err} ->
@@ -22,7 +31,32 @@ def get_users() do
     end
   end
 
-  def make_record(username, passwordhash) do
+  def add_user(username, password) do
+    dir = get_users_dir()
+    add_user2(dir, username, password)
+  end
+
+  #
+  # add user escript API
+  #
+
+  def add_user_for_escript(username, password) do
+    dir = "./"
+    add_user2(dir, username, password)
+  end
+
+  #
+  # Private fns
+  #
+
+  defp add_user2(dir, username, password) do
+    hash = Pbkdf2.hash_pwd_salt(password)
+    newrecord = make_record(username, hash)
+    file = @usersDB
+    ^dir = IncunabulaUtilities.DB.appendDB(dir, file, newrecord)
+  end
+
+  defp make_record(username, passwordhash) do
     _newrecord = %{username:     username,
                    passwordhash: passwordhash}
   end

@@ -17,23 +17,14 @@ defmodule AddUser do
     help()
   end
 
-  defp process({name, password}) do
+  defp process({username, password}) do
     case is_password_valid?(password) do
       true  -> case File.exists?("./" <> @usersDB) do
-                 :true  -> add_user(name, password)
-                 :false -> create_file(name, password)
+                 :true  -> add_user(username, password)
+                 :false -> create_file(username, password)
                end
       false -> help()
     end
-  end
-
-  # this is here and not in users because it doesn't know what dir to be in
-  def add_user(username, password) do
-    hash = Pbkdf2.hash_pwd_salt(password)
-    newrecord = IncunabulaUtilities.Users.make_record(username, hash)
-    dir = "./"
-    file = @usersDB
-    ^dir = IncunabulaUtilities.DB.appendDB(dir, file, newrecord)
   end
 
   defp create_file(username, password) do
@@ -42,6 +33,10 @@ defmodule AddUser do
     ^dir = IncunabulaUtilities.DB.createDB(dir, file)
     add_user(username, password)
     end
+
+  defp add_user(username, password) do
+    IncunabulaUtilities.Users.add_user_for_escript(username, password)
+  end
 
   defp is_password_valid?(password)
   when byte_size(password) > 9

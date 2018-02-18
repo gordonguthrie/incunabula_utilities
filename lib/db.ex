@@ -16,7 +16,7 @@ defmodule IncunabulaUtilities.DB do
   * the number of chaffs created
   * if any of these get > 100 I would be very surprised
   The databases here are all designed to be stored under git - hence the format
-  It is designed to be used in pipes so the update, replace, create fns
+  It is designed to be used in pipes so the update/replace,/delete/create fns
   return the DB dir
   """
 
@@ -50,6 +50,13 @@ defmodule IncunabulaUtilities.DB do
     end
   end
 
+  def delete_records(dir, file, keyfield, keyval) do
+    db = readDB(dir, file)
+    # if there is an error it will exit so don't check for errors
+    newdb = delete(db, keyfield, keyval, @acc)
+    replaceDB(dir, file, newdb)
+  end
+
   def update_record(dir, file, keyfield, keyval, newrecord) do
     db = readDB(dir, file)
     case update(db, {:record, newrecord}, keyfield, keyval, @acc) do
@@ -71,6 +78,18 @@ defmodule IncunabulaUtilities.DB do
   def lookup_record(dir, file, keyfield, keyvalue) do
     db = readDB(dir, file)
     _record = filter(db, :record, keyfield, keyvalue)
+  end
+
+  defp delete([], _keyfield, _keyval, acc), do: Enum.reverse(acc)
+
+  defp delete([h | t], keyfield, keyval, acc) do
+    case Map.has_key?(h, keyfield) do
+      false -> exit(:non_existant_field)
+      true  -> case Map.get(h, keyfield) do
+                 ^keyval -> delete(t, keyfield, keyval, acc)
+                 _other  -> delete(t, keyfield, keyval, [h | acc])
+               end
+    end
   end
 
   defp collect([], _valuefield, acc), do: Enum.reverse(acc)
@@ -139,6 +158,5 @@ defmodule IncunabulaUtilities.DB do
       true  -> Map.get(h, fieldname)
     end
   end
-
 
 end
