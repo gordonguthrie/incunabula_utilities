@@ -54,6 +54,7 @@ defmodule IncunabulaUtilities.Users do
     newrecord = make_record(username, hash)
     file = @usersDB
     ^dir = IncunabulaUtilities.DB.appendDB(dir, file, newrecord)
+    :ok
   end
 
   defp make_record(username, passwordhash) do
