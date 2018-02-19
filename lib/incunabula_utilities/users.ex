@@ -81,10 +81,15 @@ defmodule IncunabulaUtilities.Users do
     reply = case is_password_valid?(password) do
               true ->
                 dir = get_users_dir()
-                hash = Pbkdf2.hash_pwd_salt(password)
-                :ok = IncunabulaUtilities.DB.update_value(dir, @usersDB,
-                  :username, username, :passwordhash, hash)
-                false ->
+                case is_existing_user?(dir, username) do
+                  true ->
+                    hash = Pbkdf2.hash_pwd_salt(password)
+                    :ok = IncunabulaUtilities.DB.update_value(dir, @usersDB,
+                      :username, username, :passwordhash, hash)
+                  false ->
+                    {:error, "user doesn't exist"}
+                end
+              false ->
                 {:error, "password is not valid"}
             end
     {:reply, reply, state}
