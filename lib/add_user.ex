@@ -60,7 +60,7 @@ defmodule AddUser do
 
     Usage
     -----
-    >./add_user username password
+    >./incunabula_utilities username password
 
     Password Restrictions
     ---------------------

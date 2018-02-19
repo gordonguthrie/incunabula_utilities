@@ -2,10 +2,10 @@ defmodule AddUser.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :add_users,
+    [app: :incunabula_utilities,
      version: "0.0.1",
      elixir: "~> 1.2",
-     build_embedded: Mix.env == :prod,
+     build_embedded:  Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      description: "add users for Incunabula",
      package: package(),
@@ -17,7 +17,12 @@ defmodule AddUser.Mixfile do
     [main_module: AddUser, embed_elixir: true]
   end
 
-  def application, do: [applications: []]
+  def application do
+    [
+     mod: {IncunabulaUtilities, []},
+     applications: []
+    ]
+  end
 
   defp deps do
     [

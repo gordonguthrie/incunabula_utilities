@@ -8,9 +8,8 @@ defmodule IncunabulaUtilities do
 
     # Define workers and child supervisors to be supervised
     children = [
-      # Start the endpoint when the application starts
-      supervisor(IncunabulaUtilities.Endpoint, []),
-      worker(Incunabula.Users, [])
+      supervisor(IncunabulaUtilities.Supervisor, []),
+      worker(IncunabulaUtilities.Users, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
