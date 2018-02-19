@@ -5,7 +5,7 @@ defmodule IncunabulaUtilities.Supervisor do
     Supervisor.start_link(__MODULE__, :ok, [])
   end
 
-  def init(params) do
+  def init(_params) do
     children = [
       worker(IncunabulaUtilities.Users, [])
     ]
