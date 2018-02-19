@@ -136,8 +136,21 @@ defmodule IncunabulaUtilities.Users do
     hash = Pbkdf2.hash_pwd_salt(password)
     newrecord = make_record(username, hash)
     file = @usersDB
-    ^dir = IncunabulaUtilities.DB.appendDB(dir, file, newrecord)
-    :ok
+    case is_existing_user?(dir, username) do
+      true ->
+        {:error, "user already exists"}
+      false ->
+        ^dir = IncunabulaUtilities.DB.appendDB(dir, file, newrecord)
+        :ok
+    end
+  end
+
+  def is_existing_user?(dir, username) do
+   case IncunabulaUtilities.DB.lookup_value(dir, @usersDB, :username,
+      username, :username) do
+     {:ok, ^username}           -> true
+     {:error, :no_match_of_key} -> false
+   end
   end
 
   defp make_record(username, passwordhash) do
