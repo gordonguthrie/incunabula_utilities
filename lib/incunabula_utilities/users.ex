@@ -94,8 +94,7 @@ defmodule IncunabulaUtilities.Users do
     reply = case is_password_valid?(password) do
               true ->
                 dir = get_users_dir()
-                :ok = do_add_user(dir, username, password)
-                :ok
+                do_add_user(dir, username, password)
               false ->
                 {:error, "password is not valid"}
             end
