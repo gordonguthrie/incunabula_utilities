@@ -8,8 +8,7 @@ defmodule IncunabulaUtilities do
 
     # Define workers and child supervisors to be supervised
     children = [
-      supervisor(IncunabulaUtilities.Supervisor, []),
-      worker(IncunabulaUtilities.Users, [])
+      supervisor(IncunabulaUtilities.Supervisor, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
