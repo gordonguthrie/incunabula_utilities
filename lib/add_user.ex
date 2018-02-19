@@ -18,7 +18,7 @@ defmodule AddUser do
   end
 
   defp process({username, password}) do
-    case is_password_valid?(password) do
+    case IncunabulaUtilities.Users.is_password_valid?(password) do
       true  -> case File.exists?("./" <> @usersDB) do
                  :true  -> add_user(username, password)
                  :false -> create_file(username, password)
@@ -36,16 +36,6 @@ defmodule AddUser do
 
   defp add_user(username, password) do
     IncunabulaUtilities.Users.add_user_for_escript(username, password)
-  end
-
-  defp is_password_valid?(password)
-  when byte_size(password) > 9
-  and  byte_size(password) < 121 do
-    true
-  end
-
-  defp is_password_valid?(_) do
-    false
   end
 
   defp parse_args(args) do
