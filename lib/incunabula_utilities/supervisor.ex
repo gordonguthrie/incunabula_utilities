@@ -6,8 +6,6 @@ defmodule IncunabulaUtilities.Supervisor do
   end
 
   def init(params) do
-    IO.inspect "in init for supervisor"
-    IO.inspect params
     children = [
       worker(IncunabulaUtilities.Users, [])
     ]
