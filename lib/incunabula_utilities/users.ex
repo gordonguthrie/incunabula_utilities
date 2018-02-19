@@ -84,8 +84,9 @@ defmodule IncunabulaUtilities.Users do
                 case is_existing_user?(dir, username) do
                   true ->
                     hash = Pbkdf2.hash_pwd_salt(password)
-                    :ok = IncunabulaUtilities.DB.update_value(dir, @usersDB,
+                    ^dir = IncunabulaUtilities.DB.update_value(dir, @usersDB,
                       :username, username, :passwordhash, hash)
+                    :ok
                   false ->
                     {:error, "user doesn't exist"}
                 end
